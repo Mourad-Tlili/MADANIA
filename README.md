@@ -61,7 +61,7 @@ Before you begin, ensure you have the following installed and running on your sy
 
 Open your terminal or command prompt, navigate to your desired workspace directory, and run:
 
-```bash
+```$
 git clone <your-repository-url>
 cd <project-directory-name>
 ```
@@ -80,10 +80,10 @@ This application uses an .env file to manage sensitive database credentials for 
 * Run the Gradle build command:
 
 On macOS/Linux:
-```bash ./gradlew clean build ```
+```$ ./gradlew clean build ```
 
 On Windows
-```bash gradlew.bat clean build ```
+```$ gradlew.bat clean build ```
 
 ### 6. Running the Application with Docker Compose
 
@@ -93,7 +93,7 @@ Docker Compose orchestrates the startup of the MySQL database container and the 
 * Navigate to the root directory of the project (where docker-compose.yml is located).
 * Run the following command:
 
-```bash docker-compose up --build ```
+```$ docker-compose up --build ```
 
 ### 7. Building the Application (WAR)
 Once the Docker Compose services are up and running:
@@ -101,20 +101,20 @@ Once the Docker Compose services are up and running:
 * Your application's API will be accessible on your host machine at http://localhost:8080.
 
 API Endpoints
-Create User: ```bash  POST /api/v1/users ```
+Create User: ```$  POST /api/v1/users ```
 
-Get User by CIN and Release Date: ```bash GET /api/v1/users/cin/{cin}?releaseDate=YYYY-MM-DD```
+Get User by CIN and Release Date: ```$ GET /api/v1/users/cin/{cin}?releaseDate=YYYY-MM-DD```
 
  **Example Postman Requests**
 
 **1. Create a New User:**
-```bash
+```$
 Method: POST
 URL: http://localhost:8080/api/v1/users
 Headers: Content-Type: application/json
 Body (raw JSON):
 ```
-```bash
+```$
 {
     "name": "Mourad Tlili",
     "cin": "12345678",
@@ -127,7 +127,7 @@ Body (raw JSON):
 
 ** 2. Get User by CIN and Release Date: **
 
-```bash
+```$
 Method: GET
 URL: http://localhost:8080/api/v1/users/cin/12345678
 Params (Query Parameters in Postman):
@@ -147,12 +147,12 @@ The project includes unit and integration tests. To run them:
 
     * On macOS/Linux:
 
-    ```bash
+    ```$
     ./gradlew test
     ```
 
     * On Windows 
-    ```bash
+    ```$
     gradlew.bat test
     ```
 
@@ -160,7 +160,7 @@ The project includes unit and integration tests. To run them:
 
 ### 9. Database Management
 Ensure services are running: docker-compose up\
-Connect to the MySQL container: ```bashdocker exec -it mysql_for_user_app mysql -u root -p```\
+Connect to the MySQL container: ```$docker exec -it mysql_for_user_app mysql -u root -p```\
  (root password will be requested)\
  
 **Now you are able to manage the database from terminal**
