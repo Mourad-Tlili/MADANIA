@@ -1,4 +1,4 @@
-# Interview Demo - User Management API (Spring Boot, Docker, Tomcat, MySQL)
+# Interview Demo - MADANIA API (Spring Boot, Docker, Tomcat, MySQL)
 
 This project is a Spring Boot application demonstrating a simple User Management API. It allows for the creation and retrieval of users, incorporating details such as their CIN (National Identity Number), CIN release date, and marital status. The application is designed for a containerized deployment using Docker and Docker Compose, featuring a MySQL database backend and deployment on an Apache Tomcat server.
 
