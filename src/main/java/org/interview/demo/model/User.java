@@ -29,9 +29,6 @@ public class User {
     private LocalDate cinReleaseDate; // New field for CIN release date
 
     @Column(nullable = false)
-    private boolean isMarried;
+    private boolean marriedStatus;
 
-    public boolean isMarried() {
-        return isMarried;
-    }
 }

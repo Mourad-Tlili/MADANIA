@@ -7,13 +7,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.persistence.EntityNotFoundException; // Keep for service layer exception
+import jakarta.persistence.EntityNotFoundException; // For exceptions from service layer
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.HashMap; // For structured error response
+import java.util.HashMap; // For structured error response for ConstraintViolationException
 import java.util.Map;     // For structured error response
 import java.util.stream.Collectors; // For structured error response
 
@@ -40,7 +40,9 @@ public class UserController {
      */
     private boolean isStringNumeric(String str) {
         if (str == null || str.isEmpty()) {
-            return false; // Handled by earlier checks, but good for standalone use
+            // This check is usually done before calling this method,
+            // but good for robustness if the method is used elsewhere.
+            return false;
         }
         for (char c : str.toCharArray()) {
             if (!Character.isDigit(c)) {
@@ -93,11 +95,10 @@ public class UserController {
             logger.warn("Validation failed for createUser with CIN '{}': CIN Release Date cannot be null.", cin);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CIN Release Date cannot be null.");
         }
-        // --- Date validations ---:
-         if (user.getCinReleaseDate().isAfter(LocalDate.now())) {
-             logger.warn("Validation failed for createUser with CIN '{}': CIN Release Date cannot be in the future.", cin);
-             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CIN Release Date cannot be in the future.");
-         }
+        if (user.getCinReleaseDate().isAfter(LocalDate.now())) { // Good addition!
+            logger.warn("Validation failed for createUser with CIN '{}': CIN Release Date cannot be in the future.", cin);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CIN Release Date cannot be in the future.");
+        }
 
         try {
             User savedUser = userService.createUser(user);
@@ -106,7 +107,7 @@ public class UserController {
             logger.warn("Conflict while creating user with CIN '{}': {}", cin, e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (jakarta.validation.ConstraintViolationException cve) {
-
+            logger.warn("Constraint violation during persistence for CIN");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Data validation failed during save."));
         } catch (Exception e) { // Catch other unexpected exceptions
             logger.error("Unexpected error creating user with CIN '{}': {}", requestCin, e.getMessage(), e);
@@ -123,18 +124,19 @@ public class UserController {
     @GetMapping("/cin/{cin}") // Example: /api/v1/users/cin/12345678?releaseDate=2023-01-15
     public ResponseEntity<?> getUserByCinAndReleaseDate(
             @PathVariable String cin,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate releaseDate) {
+            // allowing your manual 'if (releaseDate == null)' check below to execute.
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate releaseDate) {
 
-        logger.info("Received request to get user by CIN: {} and ReleaseDate: {}", cin, releaseDate);
+        logger.info("Received request to get user by CIN: {} and ReleaseDate: {}", cin, (releaseDate != null ? releaseDate : "null"));
 
         // --- CIN PathVariable Validation ---
         if (cin == null || cin.trim().isEmpty() || cin.length() != 8 || !isStringNumeric(cin)) {
             logger.warn("Validation failed for getUserByCinAndReleaseDate: Invalid CIN format in URL path variable '{}'.", cin);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid CIN format in URL.");
         }
-        // --- ReleaseDate RequestParam Validation ---
+        // --- ReleaseDate RequestParam Validation (now this will be hit if param is missing) ---
         if (releaseDate == null) {
-            logger.warn("Validation failed for getUserByCinAndReleaseDate with CIN '{}': Release Date parameter cannot be null.", cin);
+            logger.warn("Validation failed for getUserByCinAndReleaseDate with CIN '{}': Release Date parameter ('releaseDate') cannot be null.", cin);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Release Date parameter ('releaseDate') cannot be null.");
         }
 
