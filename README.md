@@ -158,6 +158,8 @@ The project includes unit and integration tests. To run them:
 
 *Test results will be displayed in the console. A detailed HTML report can be found in build/reports/tests/test/index.html.
 
+![Capture d’écran 2025-05-09 à 3 02 42 PM](https://github.com/user-attachments/assets/2cacc1cd-fdd1-41b3-8f60-1fec0bf1ccbc)
+
 ### 9. Database Management
 Ensure services are running: docker-compose up\
 Connect to the MySQL container: ```$docker exec -it mysql_for_user_app mysql -u root -p```\
